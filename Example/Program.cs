@@ -1,12 +1,13 @@
 using Example.Handlers;
 using Example.Handlers.Commands;
 using Example.Service;
-using Mofucat.TcpServer;
+
+using Mofucat.TcpService;
 
 var builder = Host.CreateApplicationBuilder(args);
 
 // TCP Server
-builder.Services.AddTcpServer(static options =>
+builder.Services.AddTcpService(static options =>
 {
     options.ListenAnyIP<SampleHandler>(18888);
 });

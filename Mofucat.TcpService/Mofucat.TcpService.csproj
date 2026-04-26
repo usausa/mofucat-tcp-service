@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>Mofucat.TcpServer</PackageId>
-    <Title>Mofucat.TcpServer</Title>
+    <PackageId>Mofucat.TcpService</PackageId>
+    <Title>Mofucat.TcpService</Title>
     <Description>Kestrel TCP Server host.</Description>
     <PackageTags>hostedservice kestrel tcp</PackageTags>
   </PropertyGroup>

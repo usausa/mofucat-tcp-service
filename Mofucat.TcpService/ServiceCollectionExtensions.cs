@@ -1,14 +1,14 @@
-namespace Mofucat.TcpServer;
+namespace Mofucat.TcpService;
 
 using Microsoft.Extensions.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
     /// <summary>Adds a Kestrel-based TCP server as a hosted service.</summary>
-    public static IServiceCollection AddTcpServer(this IServiceCollection services, Action<TcpServerOptions> options)
+    public static IServiceCollection AddTcpService(this IServiceCollection services, Action<TcpServiceOptions> options)
     {
         services.AddSingleton(options);
-        services.AddHostedService<TcpServerService>();
+        services.AddHostedService<TcpService>();
         return services;
     }
 }

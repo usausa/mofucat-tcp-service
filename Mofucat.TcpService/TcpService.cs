@@ -1,4 +1,4 @@
-namespace Mofucat.TcpServer;
+namespace Mofucat.TcpService;
 
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets;
@@ -8,13 +8,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 #pragma warning disable CA1812
-internal sealed class TcpServerService : IHostedService, IDisposable
+internal sealed class TcpService : IHostedService, IDisposable
 {
     private readonly KestrelServer kestrelServer;
 
     private readonly bool gracefulShutdown;
 
-    public TcpServerService(IServiceProvider serviceProvider, Action<TcpServerOptions> config)
+    public TcpService(IServiceProvider serviceProvider, Action<TcpServiceOptions> config)
     {
         var serverOptions = new KestrelServerOptions
         {
@@ -22,7 +22,7 @@ internal sealed class TcpServerService : IHostedService, IDisposable
         };
         var transportOptions = new SocketTransportOptions();
 
-        var options = new TcpServerOptions(serverOptions, transportOptions);
+        var options = new TcpServiceOptions(serverOptions, transportOptions);
         config(options);
 
         var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();

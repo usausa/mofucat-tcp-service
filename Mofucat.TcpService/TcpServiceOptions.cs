@@ -1,4 +1,4 @@
-namespace Mofucat.TcpServer;
+namespace Mofucat.TcpService;
 
 using System.Net;
 
@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets;
 
-public sealed class TcpServerOptions
+public sealed class TcpServiceOptions
 {
     private readonly KestrelServerOptions serverOptions;
 
@@ -14,7 +14,7 @@ public sealed class TcpServerOptions
 
     public bool GracefulShutdown { get; set; }
 
-    internal TcpServerOptions(KestrelServerOptions serverOptions, SocketTransportOptions transportOptions)
+    internal TcpServiceOptions(KestrelServerOptions serverOptions, SocketTransportOptions transportOptions)
     {
         this.serverOptions = serverOptions;
         TransportOptions = transportOptions;
