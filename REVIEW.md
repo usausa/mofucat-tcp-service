@@ -14,7 +14,8 @@
 
 - `AddTcpService(Action<TcpServiceOptions>)` は複数回呼び出しても 1 つの hosted service に設定が累積される
 - `TcpServiceOptions` から `Listen<T>()` / `ListenLocalhost<T>()` / `ListenAnyIP<T>()` を使って `ConnectionHandler` をバインドできる
-- 各 `Listen*` に `Action<ListenOptions>` overload があり、endpoint ごとの追加構成ができる
+- 公開 API は TCP 専用に寄せられており、HTTP 系設定を直接触れない
+- Kestrel HTTPS ベースの TLS 対応は公開 API から除外されている
 - `SocketTransportOptions` は `TransportOptions` 経由で直接調整できる
 - README は `Mofucat.TcpService` 名義に統一され、英語で最新仕様を説明する構成へ更新された
 
@@ -32,7 +33,7 @@
 ### 1. API の拡張余地
 
 - endpoint 未登録時の起動失敗を明示的な例外として補足できると診断性が上がる
-- `ListenUnixSocket` など Kestrel の他 endpoint 形態への対応余地がある
+- `ListenUnixSocket` など TCP 系 endpoint 形態への対応余地がある
 
 ### 2. テスト整備
 

@@ -16,6 +16,7 @@
     <Project Path="Mofucat.TcpService/Mofucat.TcpService.csproj" />
   </Folder>
   <Folder Name="/Example/">
+    <Project Path="Example.Client/Example.Client.csproj" />
     <Project Path="Example/Example.csproj" />
   </Folder>
 </Solution>

@@ -66,29 +66,42 @@ builder.Services.AddTcpService(static options =>
 
 builder.Services.AddTcpService(static options =>
 {
-    options.ListenLocalhost<AdminHandler>(18889);
+    options.Listen<AdminHandler>(System.Net.IPAddress.Loopback, 18889);
 });
 ```
 
-## Per-endpoint configuration
+## Protocol support
 
-Each `Listen*` method has an overload that accepts `Action<ListenOptions>`.
+This library targets raw TCP only.
+
+- HTTP is not supported
+- HTTP/1.1, HTTP/2, and HTTP/3 are not public configuration targets
+- the library forces `HttpProtocols.None`
+
+The public API is intentionally narrowed so callers cannot enable unrelated Kestrel HTTP settings.
+
+## TCP-focused configuration
+
+The exposed configuration is limited to TCP-relevant options.
 
 ```csharp
 builder.Services.AddTcpService(static options =>
 {
-    options.ListenAnyIP<SampleHandler>(18888, static listenOptions =>
-    {
-        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.None;
-    });
+    options.ListenAnyIP<SampleHandler>(18888);
 });
 ```
 
-This allows additional endpoint-level configuration while still binding the specified `ConnectionHandler`.
+`TransportOptions` is available for socket transport tuning, but endpoint registration no longer accepts arbitrary `ListenOptions` callbacks.
+
+## SSL/TLS support
+
+This library does not expose TLS listener support.
+
+If SSL/TLS support is needed, it should be implemented explicitly in application code as raw TCP stream handling, for example with `SslStream`, rather than by enabling Kestrel HTTPS features.
 
 ## Sample
 
-The `Example` project shows a simple command-based TCP server.
+The `Example` project shows a simple command-based TCP server over plain TCP.
 
 ```csharp
 using Example.Handlers;
@@ -103,13 +116,6 @@ builder.Services.AddTcpService(static options =>
 {
     options.ListenAnyIP<SampleHandler>(18888);
 });
-builder.Services.AddTcpService(static options =>
-{
-    options.ListenLocalhost<SampleHandler>(18889, static listenOptions =>
-    {
-        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.None;
-    });
-});
 builder.Services.AddSingleton<ICommand, ExitCommand>();
 builder.Services.AddSingleton<ICommand, GetCommand>();
 builder.Services.AddSingleton<ICommand, SetCommand>();
@@ -117,6 +123,16 @@ builder.Services.AddSingleton<ICommand, SetCommand>();
 builder.Services.AddSingleton<FeatureService>();
 
 builder.Build().Run();
+```
+
+- Plain TCP endpoint: `0.0.0.0:18888`
+
+## Client sample
+
+The `Example.Client` project is a console client. Its TLS mode is a standalone `SslStream` example for raw TCP, not a feature provided by this library.
+
+```powershell
+dotnet run --project Example.Client -- 127.0.0.1 18888
 ```
 
 The sample protocol supports:
@@ -144,13 +160,9 @@ Registers the hosted TCP service and appends the provided configuration.
 `TcpServiceOptions` exposes:
 
 - `Listen<T>(IPAddress address, int port)`
-- `Listen<T>(IPAddress address, int port, Action<ListenOptions> configure)`
 - `Listen<T>(IPEndPoint endPoint)`
-- `Listen<T>(IPEndPoint endPoint, Action<ListenOptions> configure)`
 - `ListenLocalhost<T>(int port)`
-- `ListenLocalhost<T>(int port, Action<ListenOptions> configure)`
 - `ListenAnyIP<T>(int port)`
-- `ListenAnyIP<T>(int port, Action<ListenOptions> configure)`
 - `TransportOptions`
 - `GracefulShutdown`
 
