@@ -20,35 +20,59 @@ public sealed class TcpServiceOptions
         TransportOptions = transportOptions;
     }
 
+    /// <summary>Listens on the specified IP address and port using the specified connection handler.</summary>
     public void Listen<T>(IPAddress address, int port)
         where T : ConnectionHandler =>
-        serverOptions.Listen(address, port, static config =>
-        {
-            config.Protocols = HttpProtocols.None;
-            config.UseConnectionHandler<T>();
-        });
+        Listen<T>(address, port, static _ => { });
 
+    /// <summary>Listens on the specified IP address and port using the specified connection handler.</summary>
+    public void Listen<T>(IPAddress address, int port, Action<ListenOptions> configure)
+        where T : ConnectionHandler
+    {
+        serverOptions.Listen(address, port, config => ConfigureListenOptions<T>(config, configure));
+    }
+
+    /// <summary>Listens on the specified endpoint using the specified connection handler.</summary>
     public void Listen<T>(IPEndPoint endPoint)
         where T : ConnectionHandler =>
-        serverOptions.Listen(endPoint, static config =>
-        {
-            config.Protocols = HttpProtocols.None;
-            config.UseConnectionHandler<T>();
-        });
+        Listen<T>(endPoint, static _ => { });
 
+    /// <summary>Listens on the specified endpoint using the specified connection handler.</summary>
+    public void Listen<T>(IPEndPoint endPoint, Action<ListenOptions> configure)
+        where T : ConnectionHandler
+    {
+        serverOptions.Listen(endPoint, config => ConfigureListenOptions<T>(config, configure));
+    }
+
+    /// <summary>Listens on localhost using the specified connection handler.</summary>
     public void ListenLocalhost<T>(int port)
         where T : ConnectionHandler =>
-        serverOptions.ListenLocalhost(port, static config =>
-        {
-            config.Protocols = HttpProtocols.None;
-            config.UseConnectionHandler<T>();
-        });
+        ListenLocalhost<T>(port, static _ => { });
 
+    /// <summary>Listens on localhost using the specified connection handler.</summary>
+    public void ListenLocalhost<T>(int port, Action<ListenOptions> configure)
+        where T : ConnectionHandler
+    {
+        serverOptions.ListenLocalhost(port, config => ConfigureListenOptions<T>(config, configure));
+    }
+
+    /// <summary>Listens on any IP address using the specified connection handler.</summary>
     public void ListenAnyIP<T>(int port)
         where T : ConnectionHandler =>
-        serverOptions.ListenAnyIP(port, static config =>
-        {
-            config.Protocols = HttpProtocols.None;
-            config.UseConnectionHandler<T>();
-        });
+        ListenAnyIP<T>(port, static _ => { });
+
+    /// <summary>Listens on any IP address using the specified connection handler.</summary>
+    public void ListenAnyIP<T>(int port, Action<ListenOptions> configure)
+        where T : ConnectionHandler
+    {
+        serverOptions.ListenAnyIP(port, config => ConfigureListenOptions<T>(config, configure));
+    }
+
+    private static void ConfigureListenOptions<T>(ListenOptions config, Action<ListenOptions> configure)
+        where T : ConnectionHandler
+    {
+        config.Protocols = HttpProtocols.None;
+        configure(config);
+        config.UseConnectionHandler<T>();
+    }
 }

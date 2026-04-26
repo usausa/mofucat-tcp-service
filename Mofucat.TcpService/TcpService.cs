@@ -14,7 +14,7 @@ internal sealed class TcpService : IHostedService, IDisposable
 
     private readonly bool gracefulShutdown;
 
-    public TcpService(IServiceProvider serviceProvider, Action<TcpServiceOptions> config)
+    public TcpService(IServiceProvider serviceProvider, IEnumerable<Action<TcpServiceOptions>> registrations)
     {
         var serverOptions = new KestrelServerOptions
         {
@@ -23,7 +23,10 @@ internal sealed class TcpService : IHostedService, IDisposable
         var transportOptions = new SocketTransportOptions();
 
         var options = new TcpServiceOptions(serverOptions, transportOptions);
-        config(options);
+        foreach (var registration in registrations)
+        {
+            registration(options);
+        }
 
         var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
         var transportFactory = new SocketTransportFactory(new OptionsWrapper<SocketTransportOptions>(transportOptions), loggerFactory);
