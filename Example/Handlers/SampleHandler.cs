@@ -1,6 +1,7 @@
 namespace Example.Handlers;
 
 using System.Buffers;
+using System.Runtime.CompilerServices;
 
 using Example.Handlers.Commands;
 
@@ -77,6 +78,8 @@ public sealed class SampleHandler : ConnectionHandler
         }
     }
 
+    [SkipLocalsInit]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool ReadLine(ref ReadOnlySequence<byte> buffer, out ReadOnlySequence<byte> line)
     {
         var reader = new SequenceReader<byte>(buffer);
@@ -91,17 +94,26 @@ public sealed class SampleHandler : ConnectionHandler
         return false;
     }
 
-    private async ValueTask<CommandResult> ProcessLineAsync(ReadOnlySequence<byte> buffer, IBufferWriter<byte> writer)
+    private ValueTask<CommandResult> ProcessLineAsync(ReadOnlySequence<byte> buffer, IBufferWriter<byte> writer)
     {
         MemoryHelper.Split(ref buffer, out var first, (byte)' ');
         foreach (var command in commands)
         {
             if (command.Match(first))
             {
-                return await command.ExecuteAsync(buffer, writer) ? CommandResult.Success : CommandResult.Quit;
+                var task = command.ExecuteAsync(buffer, writer);
+                if (task.IsCompleted)
+                {
+                    return ValueTask.FromResult(task.Result ? CommandResult.Success : CommandResult.Quit);
+                }
+
+                return AwaitAsync(task);
             }
         }
 
-        return CommandResult.Unknown;
+        return ValueTask.FromResult(CommandResult.Unknown);
+
+        static async ValueTask<CommandResult> AwaitAsync(ValueTask<bool> task) =>
+            await task.ConfigureAwait(false) ? CommandResult.Success : CommandResult.Quit;
     }
 }

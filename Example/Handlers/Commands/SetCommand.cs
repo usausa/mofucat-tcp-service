@@ -1,6 +1,7 @@
 namespace Example.Handlers.Commands;
 
 using System.Buffers;
+using System.Runtime.CompilerServices;
 
 using Example.Handlers;
 using Example.Service;
@@ -14,9 +15,10 @@ public sealed class SetCommand : ICommand
         this.featureService = featureService;
     }
 
-    public bool Match(ReadOnlySequence<byte> command) => command.SequentialEqual("set"u8);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool Match(in ReadOnlySequence<byte> command) => command.SequentialEqual("set"u8);
 
-    public ValueTask<bool> ExecuteAsync(ReadOnlySequence<byte> options, IBufferWriter<byte> writer)
+    public ValueTask<bool> ExecuteAsync(in ReadOnlySequence<byte> options, IBufferWriter<byte> writer)
     {
         if (options.SequentialEqual("1"u8))
         {

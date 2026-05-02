@@ -2,23 +2,9 @@ namespace Example.Service;
 
 public sealed class FeatureService
 {
-    private readonly Lock sync = new();
+    private volatile bool enable;
 
-    private bool enable;
+    public void UpdateFeature(bool value) => enable = value;
 
-    public void UpdateFeature(bool value)
-    {
-        lock (sync)
-        {
-            enable = value;
-        }
-    }
-
-    public bool QueryFeature()
-    {
-        lock (sync)
-        {
-            return enable;
-        }
-    }
+    public bool QueryFeature() => enable;
 }

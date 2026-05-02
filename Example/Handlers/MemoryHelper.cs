@@ -1,9 +1,12 @@
 namespace Example.Handlers;
 
 using System.Buffers;
+using System.Runtime.CompilerServices;
 
 public static class MemoryHelper
 {
+    [SkipLocalsInit]
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static bool SequentialEqual<T>(this ReadOnlySequence<T> sequence, ReadOnlySpan<T> span)
     {
         if (sequence.IsSingleSegment)
@@ -25,6 +28,8 @@ public static class MemoryHelper
         return span.Length == 0;
     }
 
+    [SkipLocalsInit]
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static void Split<T>(ref ReadOnlySequence<T> buffer, out ReadOnlySequence<T> split, T delimiter)
         where T : unmanaged, IEquatable<T>
     {
