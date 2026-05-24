@@ -1,5 +1,6 @@
 namespace Mofucat.TcpService;
 
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 using Microsoft.AspNetCore.Connections;
@@ -20,31 +21,31 @@ public sealed class TcpServiceOptions
         TransportOptions = transportOptions;
     }
 
-    public void Listen<T>(IPAddress address, int port)
+    public void Listen<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(IPAddress address, int port)
         where T : ConnectionHandler
     {
         serverOptions.Listen(address, port, static config => ConfigureListenOptions<T>(config));
     }
 
-    public void Listen<T>(IPEndPoint endPoint)
+    public void Listen<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(IPEndPoint endPoint)
         where T : ConnectionHandler
     {
         serverOptions.Listen(endPoint, static config => ConfigureListenOptions<T>(config));
     }
 
-    public void ListenLocalhost<T>(int port)
+    public void ListenLocalhost<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(int port)
         where T : ConnectionHandler
     {
         serverOptions.ListenLocalhost(port, static config => ConfigureListenOptions<T>(config));
     }
 
-    public void ListenAnyIP<T>(int port)
+    public void ListenAnyIP<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(int port)
         where T : ConnectionHandler
     {
         serverOptions.ListenAnyIP(port, static config => ConfigureListenOptions<T>(config));
     }
 
-    private static void ConfigureListenOptions<T>(ListenOptions config)
+    private static void ConfigureListenOptions<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(ListenOptions config)
         where T : ConnectionHandler
     {
         config.Protocols = HttpProtocols.None;

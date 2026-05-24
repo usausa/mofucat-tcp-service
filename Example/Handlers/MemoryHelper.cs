@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 public static class MemoryHelper
 {
     [SkipLocalsInit]
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool SequentialEqual<T>(this ReadOnlySequence<T> sequence, ReadOnlySpan<T> span)
     {
         if (sequence.IsSingleSegment)
@@ -29,7 +29,7 @@ public static class MemoryHelper
     }
 
     [SkipLocalsInit]
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Split<T>(ref ReadOnlySequence<T> buffer, out ReadOnlySequence<T> split, T delimiter)
         where T : unmanaged, IEquatable<T>
     {
