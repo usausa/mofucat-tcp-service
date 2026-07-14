@@ -25,6 +25,7 @@ internal sealed class TcpService : IHostedService, IDisposable
         var options = new TcpServiceOptions(serverOptions, transportOptions);
         foreach (var registration in registrations)
         {
+            ArgumentNullException.ThrowIfNull(registration);
             registration(options);
         }
 
@@ -40,18 +41,7 @@ internal sealed class TcpService : IHostedService, IDisposable
     public Task StartAsync(CancellationToken cancellationToken) =>
         kestrelServer.StartAsync(NullHttpApplication.Instance, cancellationToken);
 
-    public async Task StopAsync(CancellationToken cancellationToken)
-    {
-        if (gracefulShutdown)
-        {
-            await kestrelServer.StopAsync(cancellationToken).ConfigureAwait(false);
-        }
-        else
-        {
-            using var cts = new CancellationTokenSource();
-            await cts.CancelAsync().ConfigureAwait(false);
-            await kestrelServer.StopAsync(cts.Token).ConfigureAwait(false);
-        }
-    }
+    public Task StopAsync(CancellationToken cancellationToken) =>
+        gracefulShutdown ? kestrelServer.StopAsync(cancellationToken) : kestrelServer.StopAsync(new CancellationToken(true));
 }
 #pragma warning restore CA1812
