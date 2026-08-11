@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Connections.Abstractions" Version="10.0.10" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
-    <PackageReference Include="Usa.Smart.Core" Version="2.13.0" />
+    <PackageReference Include="Usa.Smart.Core" Version="2.16.0" />
   </ItemGroup>
 
   <ItemGroup>
