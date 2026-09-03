@@ -25,7 +25,7 @@ public sealed class SampleHandler : ConnectionHandler
     public SampleHandler(ILogger<SampleHandler> log, IEnumerable<ICommand> commands)
     {
         this.log = log;
-        this.commands = commands.ToArray();
+        this.commands = [.. commands];
     }
 
     public override async Task OnConnectedAsync(ConnectionContext connection)
